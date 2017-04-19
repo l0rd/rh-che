@@ -6,3 +6,4 @@ export CHE_HOSTNAME="che.$(minishift ip).nip.io"
 export CHE_LOG_LEVEL="DEBUG"
 export CHE_DEBUGGING_ENABLED="true"
 export FABRIC8_ONLINE_PATH="${HOME}/github/fabric8-online/"
+export CHE_SERVER_IMAGE=rhche\\/che-server:nightly

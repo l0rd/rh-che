@@ -3,7 +3,7 @@ set -u
 set +e
 
 # Retrieve credentials to push the image to the docker hub
-cat jenkins-env | grep PASS > inherit-env
+cat jenkins-env | grep -e PASS -e DEVSHIFT > inherit-env
 . inherit-env
 . config
 

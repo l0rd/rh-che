@@ -2,10 +2,15 @@
 set -u
 set +e
 
-# Prepare config files
-# CHE_SERVER_DOCKER_IMAGE_TAG has to be set in che_image_tag.env file
+# Retrieve credentials to push the image to the docker hub
+cat jenkins-env | grep PASS > inherit-env
+. inherit-env
 . config
+
+# CHE_SERVER_DOCKER_IMAGE_TAG has to be set in che_image_tag.env file
 . ~/che_image_tag.env
+
+# Prepare config file
 config_file=~/tests_config
 echo "export OSO_MASTER_URL=https://api.starter-us-east-2.openshift.com:443" >> $config_file
 echo "export OSO_NAMESPACE=mlabuda-jenkins" >> $config_file

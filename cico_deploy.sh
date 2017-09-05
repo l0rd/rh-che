@@ -5,6 +5,10 @@ set +e
 # Retrieve credentials to push the image to the docker hub
 cat jenkins-env | grep -e PASS -e DEVSHIFT > inherit-env
 . inherit-env
+if [ -z "${DEVSHIFT_USERNAME+x}" ]; then echo "WARNING: failed to get DEVSHIFT_USERNAME from jenkins-env file in centos-ci job."; fi
+if [ -z "${DEVSHIFT_PASSWORD+x}" ]; then echo "WARNING: failed to get DEVSHIFT_PASSWORD from jenkins-env file in centos-ci job."; fi
+if [ -z "${RHCHEBOT_DOCKER_HUB_PASSWORD+x}" ]; then echo "WARNING: failed to get RHCHEBOT_DOCKER_HUB_PASSWORD from jenkins-env file in centos-ci job."; fi
+
 . config
 
 # CHE_SERVER_DOCKER_IMAGE_TAG has to be set in che_image_tag.env file

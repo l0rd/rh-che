@@ -229,10 +229,10 @@ subjects:
 fi
 
 # ----------------------------------------------
-# Get latest version of fabric8-online templates
+# Get latest version of fabric8 tenant templates
 # ----------------------------------------------
 # TODO make it possible to use a local Che template instead of always downloading it from maven central
-echo -n "[CHE] Retrieving latest version of fabric8 online Che template..."
+echo -n "[CHE] Retrieving latest version of fabric8 tenant Che template..."
 OSIO_VERSION=$(curl -sSL http://central.maven.org/maven2/io/fabric8/tenant/apps/che/maven-metadata.xml | grep latest | sed -e 's,.*<latest>\([^<]*\)</latest>.*,\1,g')
 echo "done! (v.${OSIO_VERSION})"
 

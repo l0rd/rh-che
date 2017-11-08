@@ -151,8 +151,8 @@
                     <type>war</type>
                 </dependency>
                 <dependency>
-                    <groupId>com.redhat.che</groupId>
-                    <artifactId>fabric8-ide-che-dashboard-war</artifactId>
+                    <groupId>org.eclipse.che.dashboard</groupId>
+                    <artifactId>che-dashboard-war</artifactId>
                     <type>war</type>
                 </dependency>
             </dependencies>

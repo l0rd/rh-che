@@ -1,0 +1,38 @@
+# Name: rhche
+# Description: Setup and Configure Red Hat Che Template
+# Url: https://www.eclipse.org/che/docs/setup/openshift/index.html
+# NAMESPACE, CHE_DOCKER_IMAGE, OPENSHIFT_TOKEN, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET
+# NAMESPACE=mini-che, CHE_DOCKER_IMAGE=eclipse/che-server:latest, OPENSHIFT_TOKEN=NULL, GITHUB_CLIENT_ID=changeme, GITHUB_CLIENT_SECRET=changeme
+# Required-Vars: NAMESPACE, CHE_DOCKER_IMAGE, CHE_DOCKER_IMAGE_TAG
+# Var-Defaults: NAMESPACE=rhche, CHE_DOCKER_IMAGE=rhche/che-server, CHE_DOCKER_IMAGE_TAG=latest
+# OpenShift-Version: >=3.5.0
+
+echo [CHE] Create the Che server Template
+oc apply -f templates/rh-che.app.yaml -n openshift
+
+echo [CHE] Creating #{NAMESPACE} project as developer
+oc adm new-project #{NAMESPACE} --description="Red Hat Che on minishift"
+oc adm policy add-role-to-user admin developer -n #{NAMESPACE}
+
+echo [CHE] Deploying Postgres
+oc apply -f templates/postgres/deployment-config.yaml -n #{NAMESPACE}
+oc apply -f templates/postgres/postgres-data-claim.yaml -n #{NAMESPACE}
+oc apply -f templates/postgres/service.yaml -n #{NAMESPACE}
+
+echo [CHE] Deploying Keycloak
+oc apply -f templates/keycloak/deployment-config.yaml -n #{NAMESPACE}
+oc apply -f templates/keycloak/keycloak-data-claim.yaml -n #{NAMESPACE}
+oc apply -f templates/keycloak/keycloak-log-claim.yaml -n #{NAMESPACE}
+oc apply -f templates/keycloak/service.yaml -n #{NAMESPACE}
+oc apply -f templates/keycloak/route.yaml -n #{NAMESPACE}
+
+echo [CHE] Deploying Che
+oc apply -f templates/rh-che.secret.yaml -n #{NAMESPACE}
+oc apply -f templates/rh-che.config.yaml -n #{NAMESPACE}
+oc new-app --param IMAGE=#{CHE_DOCKER_IMAGE} --param IMAGE_TAG=#{CHE_DOCKER_IMAGE_TAG} che -n #{NAMESPACE} 
+
+echo Please wait while the pods all startup!
+echo You can watch in the OpenShift console via:
+echo   minishift console
+echo Then you should be able the open the Che dashboard here:
+echo   http://che-#{NAMESPACE}.#{ip}.nip.io

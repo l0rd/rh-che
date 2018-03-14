@@ -1,0 +1,4 @@
+- Split the addon in 2 addons: rhche-prereq and rhche
+- Use a template parameter to set the local domain (e.g. 192.168.64.7.nip.io)
+- Remove duplicated code between yaml for prod and dev templates as much as possible
+- Mock 

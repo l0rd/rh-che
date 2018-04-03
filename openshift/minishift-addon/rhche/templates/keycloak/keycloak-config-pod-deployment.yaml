@@ -4,26 +4,43 @@
 # which accompanies this distribution, and is available at
 # http://www.eclipse.org/legal/epl-v10.html
 #
-
+kind: Template
 apiVersion: v1
-kind: Pod
 metadata:
   labels:
-    app: keycloak-util
-  name: keycloak-util
-spec:
-    containers:
-    - env:
-      - name: CHE_HOST
-        value: "${CHE_HOST}"
-      - name: HTTP_PROTOCOL
-        value: "${HTTP_PROTOCOL}"
-      - name: KC_HOST
-        value: "${KC_HOST}"
-      - name: CHE_KEYCLOAK_ADMIN_REQUIRE_UPDATE_PASSWORD
-        value: "${CHE_KEYCLOAK_ADMIN_REQUIRE_UPDATE_PASSWORD}"
-      image: "${IMAGE_KEYCLOAK}"
-      command: ["/scripts/keycloak_config.sh"]
-      name: keycloak-util
-      imagePullPolicy: Always
-    restartPolicy: Never
+    app: che
+  name: keycloak
+objects:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    labels:
+      app: keycloak-util
+    name: keycloak-util
+  spec:
+      containers:
+      - env:
+        - name: CHE_HOST
+          value: "${CHE_HOST}"
+        - name: HTTP_PROTOCOL
+          value: "${HTTP_PROTOCOL}"
+        - name: KC_HOST
+          value: "${KC_HOST}"
+        - name: CHE_KEYCLOAK_ADMIN_REQUIRE_UPDATE_PASSWORD
+          value: "${CHE_KEYCLOAK_ADMIN_REQUIRE_UPDATE_PASSWORD}"
+        image: "${IMAGE_KEYCLOAK}"
+        command: ["/scripts/keycloak_config.sh"]
+        name: keycloak-util
+        imagePullPolicy: Always
+      restartPolicy: Never
+parameters:
+- name: CHE_HOST
+  value: "rhche-rhche.192.168.64.9.nip.io"
+- name: HTTP_PROTOCOL
+  value: "http"
+- name: KC_HOST
+  value: "keycloak-rhche.192.168.64.9.nip.io"
+- name: CHE_KEYCLOAK_ADMIN_REQUIRE_UPDATE_PASSWORD
+  value: "true"
+- name: IMAGE_KEYCLOAK
+  value: "eclipse/che-keycloak:nightly"

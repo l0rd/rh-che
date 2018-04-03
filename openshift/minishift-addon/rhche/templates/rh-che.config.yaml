@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: che
+  name: rhche
 type: Opaque
 data:
-  infra-bootstrapper-binary-url: "http://che-rhche.192.168.64.7.nip.io/agent-binaries/linux_amd64/bootstrapper/bootstrapper"
+  infra-bootstrapper-binary-url: "http://rhche-rhche.192.168.64.9.nip.io/agent-binaries/linux_amd64/bootstrapper/bootstrapper"
   infra-machine-start-timeout: "5"
   infra-pvc-strategy: "common"
   infra-trust-certs: "true"
   multi-user: "true"
-  che-host: "che-rhche.192.168.64.7.nip.io"
+  che-host: "rhche-rhche.192.168.64.9.nip.io"
   workspace-storage: "/home/user/che/workspaces"
   local-conf-dir: "/etc/conf"
   che.logs.dir: "/data/logs"
@@ -31,11 +31,12 @@ data:
   che-fabric8-auth-endpoint: "http://fakeauth"
   che-fabric8-multicluster-oso-proxy-url: "http://fakeosoproxy"
   che-docker-enable-container-stop-detector: "false"
-  che-api: "http://che-rhche.192.168.64.7.nip.io/api"
-  che-websocket-endpoint: "ws://che-rhche.192.168.64.7.nip.io/api/websocket"
+  che-api: "http://rhche-rhche.192.168.64.9.nip.io/api"
+  che-websocket-endpoint: "ws://rhche-rhche.192.168.64.9.nip.io/api/websocket"
   che-workspace-logs: "/workspace_logs"
-  che-keycloak-auth-server-url: "http://keycloak-rhche.192.168.64.7.nip.io/auth"
+  che-keycloak-auth-server-url: "http://keycloak-rhche.192.168.64.9.nip.io/auth"
   che-keycloak-realm: "che"
   che-keycloak-client-id: "che-public"
   che-workspace-server-ping-success-threshold: "2"
   che-limits-user-workspaces-run-count: "1"
+  che.workspace.agent.dev.inactive_stop_timeout_ms: "1800000"

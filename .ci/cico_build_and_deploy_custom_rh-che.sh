@@ -58,24 +58,27 @@ echo "Running ${JOB_NAME} build number #${BUILD_NUMBER}, testing creds:"
 
 CREDS_NOT_SET="false"
 curl -s "https://mirror.openshift.com/pub/openshift-v3/clients/${OC_VERSION}/linux/oc.tar.gz" | tar xvz -C /usr/local/bin
-if [ -z ${DEVSHIFT_USERNAME} ] || [ -z ${DEVSHIFT_PASSWORD} ]; then
+if [ -z "${DEVSHIFT_USERNAME}" ] || [ -z "${DEVSHIFT_PASSWORD}" ]; then
   echo "Docker registry credentials not set"
   CREDS_NOT_SET="true"
 fi
-if [ -z ${RH_CHE_AUTOMATION_RDU2C_USERNAME} ] || [ -z ${RH_CHE_AUTOMATION_RDU2C_PASSWORD} ]; then
+if [ -z "${RH_CHE_AUTOMATION_RDU2C_USERNAME}" ] || [ -z "${RH_CHE_AUTOMATION_RDU2C_PASSWORD}" ]; then
   echo "RDU2C credentials not set"
   CREDS_NOT_SET="true"
 else
-  oc login ${DEV_CLUSTER_URL} --insecure-skip-tls-verify \
-                              -u ${RH_CHE_AUTOMATION_RDU2C_USERNAME} \
-                              -p ${RH_CHE_AUTOMATION_RDU2C_PASSWORD} && echo "Credentials test OK" || {
+  if oc login ${DEV_CLUSTER_URL} --insecure-skip-tls-verify \
+                                 -u "${RH_CHE_AUTOMATION_RDU2C_USERNAME}" \
+                                 -p "${RH_CHE_AUTOMATION_RDU2C_PASSWORD}";
+  then
+    echo "Credentials test OK"
+  else
     echo "Openshift login failed"
     echo "login: |${RH_CHE_AUTOMATION_RDU2C_USERNAME:0:1}*${RH_CHE_AUTOMATION_RDU2C_USERNAME:7:2}*${RH_CHE_AUTOMATION_RDU2C_USERNAME: -1}|" 
     echo "passwd: |${RH_CHE_AUTOMATION_RDU2C_PASSWORD:0:1}***${RH_CHE_AUTOMATION_RDU2C_PASSWORD: -1}|" 
     exit 3
-  }
+  fi
 fi
-if [ -z ${KEYCLOAK_TOKEN} ] || [ -z ${RH_CHE_AUTOMATION_CHE_PREVIEW_USERNAME} ] || [ -z ${RH_CHE_AUTOMATION_CHE_PREVIEW_PASSWORD} ]; then
+if [ -z "${KEYCLOAK_TOKEN}" ] || [ -z "${RH_CHE_AUTOMATION_CHE_PREVIEW_USERNAME}" ] || [ -z "${RH_CHE_AUTOMATION_CHE_PREVIEW_PASSWORD}" ]; then
   echo "Prod-preview credentials not set."
   CREDS_NOT_SET="true"
 fi
@@ -123,26 +126,29 @@ BuildTagAndPushDocker
 
 # Deploy rh-che image
 echo "Deploying nightly-${RH_TAG_DIST_SUFFIX} from registry.devshift.net/osio-prod/${NAMESPACE}/${DOCKER_IMAGE}"
-./dev-scripts/deploy_custom_rh-che.sh -u ${RH_CHE_AUTOMATION_RDU2C_USERNAME} \
-                                        -p ${RH_CHE_AUTOMATION_RDU2C_PASSWORD} \
-                                        -r prod.registry.devshift.net/osio-prod/${NAMESPACE}/${DOCKER_IMAGE} \
-                                        -t nightly-${RH_TAG_DIST_SUFFIX} \
-                                        -e che6-automated \
-                                        -s \
-                                        -z
-if [ $? != 0 ]; then
+if ./dev-scripts/deploy_custom_rh-che.sh -u "${RH_CHE_AUTOMATION_RDU2C_USERNAME}" \
+                                         -p "${RH_CHE_AUTOMATION_RDU2C_PASSWORD}" \
+                                         -r prod.registry.devshift.net/osio-prod/"${NAMESPACE}"/"${DOCKER_IMAGE}" \
+                                         -t nightly-"${RH_TAG_DIST_SUFFIX}" \
+                                         -e che6-automated \
+                                         -s \
+                                         -z;
+then
+  echo "Che successfully deployed."
+else
   echo "Custom che deployment failed. Error code:$?"
   exit 4
 fi
 set -x
 
 echo "Custom che deployment successful, running che-functional tests against ${RH_CHE_AUTOMATION_SERVER_DEPLOYMENT_URL}"
-./.ci/cico_run_che-functional-tests.sh
-if [ $? != 0 ]; then
-  echo "Che functional tests failed."
+if ./.ci/cico_run_che-functional-tests.sh;
+then
+  echo "Functional tests finished without errors."
+else
+  echo "Che functional tests failed. Error code:$?"
   exit 4
 fi
-echo "Che functional tests finished successfully."
 
 unset RH_CHE_AUTOMATION_BUILD_TAG;
 unset CHE_DOCKER_BASE_IMAGE;
